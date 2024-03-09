@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 contract Establishment {
 
-
     struct EstablishmentInfo {
         string name;
         string establishment_type;
@@ -14,11 +13,14 @@ contract Establishment {
     }
 
     mapping (address => EstablishmentInfo) public establishments;
-    mapping(address => bool) public isEstablishment;
 
-     modifier onlyEstablishment() {
-        require(isEstablishment[msg.sender], "Only establishment can add a student");
+    modifier onlyEstablishment() {
+        require(bytes(establishments[msg.sender].name).length > 0, "Only establishment can do this.");
         _;
+    }
+
+    function checkIfEstablishment(address _address) public view returns (bool){
+        return bytes(establishments[_address].name).length > 0;
     }
 
     event EstablishmentAdded(

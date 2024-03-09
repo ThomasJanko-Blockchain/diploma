@@ -35,8 +35,12 @@ contract Student {
     Establishment public establishmentContract;
 
     modifier onlyEstablishment() {
-        require(establishmentContract.isEstablishment(msg.sender), "Only establishment can add a student");
+        require(establishmentContract.checkIfEstablishment(msg.sender), "Only establishment can do this.");
         _;
+    }
+
+    function checkIfSenderIsEstablishment() public view returns (bool){
+        return establishmentContract.checkIfEstablishment(msg.sender);
     }
 
     constructor(address _establishmentContractAddress) {
@@ -58,3 +62,8 @@ contract Student {
         return students[_studentAddress];
     }
 }
+
+// ["firstName", "lastName", "birthday", "sexe", "nationality", "civilityStatus", "homeAddress", "courriel", "phone"]
+// ["Jhon", "Doe", "01/01/1990", "M", "French", "Single", "1 rue de la paix, Paris", "Joohn@lepauvre.com", "06 12 34 56 78"]
+// ["section", "subjectPfe", "enterpriseInternshipPfe", "fullnameInternshipMaster", "dateStartInternship", "dateEndInternship", "evaluation"]
+// ["Computer Science", "Blockchain", "IBM", "John Smith", "01/01/2021", "01/07/2021", "A"]
