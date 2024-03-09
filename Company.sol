@@ -12,6 +12,7 @@ contract Company {
         string email;
         string phone;
         string web_site_url;
+        bool isRegistered;
     }
 
     mapping(address => CompanyInfo) public companies;
@@ -42,12 +43,10 @@ contract Company {
     ) external {
         require(bytes(_name).length > 0, "Company Name cannot be empty.");
         require(bytes(_email).length > 0, "Company Email cannot be empty");
+        require(companies[msg.sender].isRegistered == false, "Company already registered");
         //other check ?
 
-        //TODO: refaire le check
-        // require(companies[msg.sender].isRegistered == false, "Company already registered");
-
-        companies[msg.sender] = CompanyInfo(_name, _sector, _creation_date, _classification_size, _country, _company_address, _email, _phone, _web_site_url);
+        companies[msg.sender] = CompanyInfo(_name, _sector, _creation_date, _classification_size, _country, _company_address, _email, _phone, _web_site_url, true);
 
         emit CompanyRegistered(msg.sender, _name, _sector, _creation_date, _classification_size, _country, _company_address, _email, _phone, _web_site_url);
     }
