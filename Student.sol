@@ -31,7 +31,7 @@ contract Student {
         InternshipInfo internshipInfo;
     }
 
-    mapping(address => StudentInfo) students;
+    mapping(address => StudentInfo) public students;
     Establishment public establishmentContract;
 
     modifier onlyEstablishment() {
