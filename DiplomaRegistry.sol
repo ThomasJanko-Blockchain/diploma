@@ -2,10 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "./MyToken.sol";
+import "./Establishment.sol";
+import "./Student.sol";
 
 contract DiplomaRegistry {
     struct Diploma {
-        uint ID_holder;
+        address ID_holder;
         string nom_EES;
         uint ID_EES;
         string country;
@@ -15,23 +17,34 @@ contract DiplomaRegistry {
         string obtention_date;
     }
 
-    mapping(uint => Diploma) public diplomas;
+    mapping(address => Diploma) public diplomas;
+    Establishment public establishmentContract;
+    Student public studentContract;
 
-    MyToken public tokenContract;
-    address public owner;
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function.");
+    //onlyEstablishment can add a diploma
+    modifier onlyEstablishment() {
+        require(establishmentContract.isEstablishment(msg.sender), "Only establishment can do this.");
         _;
     }
 
-    constructor (address _tokenAddress) {
-        tokenContract = MyToken(_tokenAddress);
-        owner = msg.sender;
+    //check if the sender is an establishment
+    function checkIfSenderIsEstablishment() public view returns (bool){
+        return establishmentContract.isEstablishment(msg.sender);
     }
 
+    //can be set to private
+    function checkIfStudentExist(address _idHolder) public view returns (bool){
+        return studentContract.checkIfStudentExist(_idHolder);
+    }
+
+    constructor(address _establishmentContractAddress, address _studentContractAddress) {
+        establishmentContract = Establishment(_establishmentContractAddress);
+        studentContract = Student(_studentContractAddress);
+    }
+
+    //add a diploma
     function addDiploma(
-        uint _idHolder,
+        address _idHolder,
         string memory _nomEstablishment,
         uint _idEstablishment,
         string memory _country,
@@ -39,7 +52,17 @@ contract DiplomaRegistry {
         string memory _speciality, 
         string memory _mention,
         string memory _obtentionDate
-        ) external onlyOwner {
-            diplomas[_idHolder] = Diploma(_idHolder, _nomEstablishment, _idEstablishment, _country, _typeDiploma, _speciality, _mention, _obtentionDate);
+        ) external onlyEstablishment {
+            require(studentContract.checkIfStudentExist(_idHolder), "Student does not exist");
+            diplomas[_idHolder] = Diploma(
+                _idHolder,
+                _nomEstablishment,
+                _idEstablishment,
+                _country,
+                _typeDiploma,
+                _speciality,
+                _mention,
+                _obtentionDate
+            );
         }
 }

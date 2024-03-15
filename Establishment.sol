@@ -46,8 +46,11 @@ contract Establishment {
         uint _IDAgent
     ) external {
 
-       require(bytes(_name).length > 0, "Name cannot be empty");
-       //TODO: other checks
+        require(bytes(_name).length > 0, "Name cannot be empty");
+        require(bytes(_establishmentType).length > 0, "Establishment type cannot be empty");
+        require(bytes(_country).length > 0, "Country cannot be empty");
+        require(bytes(_establishmentAddress).length > 0, "Establishment address cannot be empty");
+        require(_IDAgent > 0, "ID agent cannot be empty");
 
         establishments[msg.sender] = EstablishmentInfo(_name,
         _establishmentType,
@@ -58,10 +61,5 @@ contract Establishment {
 
         emit EstablishmentAdded(msg.sender, _name, _establishmentType, _country, _establishmentAddress, _webSiteUrl);
     }
-
-     function getEstablishment(address _establishmentAddress) external view returns (EstablishmentInfo memory){
-        return establishments[_establishmentAddress];
-    }
-
 
 }

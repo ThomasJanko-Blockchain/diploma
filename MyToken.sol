@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "./@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "./@openzeppelin/contracts/access/Ownable.sol";
+import "./@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 contract MyToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
 
@@ -35,12 +35,11 @@ contract MyToken is ERC20, ERC20Burnable, Ownable, ERC20Permit {
         _transfer(tokenOwner, _company, tokensToTransfer);
     }
 
-    function payVerificationFees(address _diplomaContract, address _company, uint _verifications) external onlyOwner {
+    function payVerificationFees(address _company, uint _verifications) external onlyOwner {
         require(_company != address(0), "Invalid contract address");
        
         uint tokensToTransfer = _verifications * 10;
         require (balanceOf(tokenOwner) >= tokensToTransfer, "Insufficient balance.");
-        // _transfer(_company, _diplomaContract, tokensToTransfer);
         _transfer(_company, tokenOwner, tokensToTransfer);
     }
 

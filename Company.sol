@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Student.sol";
+
 contract Company {
     struct CompanyInfo {
         string name;
@@ -16,6 +18,21 @@ contract Company {
     }
 
     mapping(address => CompanyInfo) public companies;
+    Student public studentContract;
+
+    // Contract constructor dependency (Establishment contract address)
+    constructor(address _studentContractAddress) {
+        studentContract = Student(_studentContractAddress);
+    }
+
+    modifier onlyCompany() {
+        require(bytes(companies[msg.sender].name).length > 0, "Only Company can do this.");
+        _;
+    }
+
+    function checkIfCompany(address _address) public view returns (bool){
+        return bytes(companies[_address].name).length > 0;
+    }
 
     event CompanyRegistered(
         address indexed companyAddress,
@@ -50,4 +67,13 @@ contract Company {
 
         emit CompanyRegistered(msg.sender, _name, _sector, _creation_date, _classification_size, _country, _company_address, _email, _phone, _web_site_url);
     }
+
+    function EvaluateStudent (address _studentAddress, string memory _evaluation) external onlyCompany {
+        require(studentContract.checkIfStudentExist(_studentAddress), "Student does not exist");
+        Student.PersonalInfo memory _personalInfo = studentContract.getStudent(_studentAddress).personalInfo;
+        Student.InternshipInfo memory _internshipInfo = studentContract.getStudent(_studentAddress).internshipInfo;
+        _internshipInfo.evaluation = _evaluation;
+        studentContract.updateStudentInfo(_studentAddress, _personalInfo, _internshipInfo);
+    }
 }
+ 
