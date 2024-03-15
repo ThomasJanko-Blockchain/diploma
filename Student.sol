@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./Establishment.sol";
-import "./Diploma.sol";
+// import "./Diploma.sol";
 
 contract Student {
     struct PersonalInfo {
@@ -38,7 +38,7 @@ contract Student {
     // Diploma public diplomaContract;
 
     // Contract constructor dependency (Establishment contract address)
-    constructor(address _establishmentContractAddress, address _diplomaContractAddress) {
+    constructor(address _establishmentContractAddress) {
         establishmentContract = Establishment(_establishmentContractAddress);
         // diplomaContract = Diploma(_diplomaContractAddress);
     }
