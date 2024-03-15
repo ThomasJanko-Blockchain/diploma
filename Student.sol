@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./Establishment.sol";
+import "./Diploma.sol";
 
 contract Student {
     struct PersonalInfo {
@@ -34,26 +35,31 @@ contract Student {
 
     mapping(address => StudentInfo) public students;
     Establishment public establishmentContract;
+    // Diploma public diplomaContract;
 
     // Contract constructor dependency (Establishment contract address)
-    constructor(address _establishmentContractAddress) {
+    constructor(address _establishmentContractAddress, address _diplomaContractAddress) {
         establishmentContract = Establishment(_establishmentContractAddress);
+        // diplomaContract = Diploma(_diplomaContractAddress);
     }
 
+    //check if the sender is an establishment (modifier)
     modifier onlyEstablishment() {
         require(establishmentContract.checkIfEstablishment(msg.sender), "Only establishment can do this.");
         _;
     }
 
+    //check if the sender is an establishment
     function checkIfSenderIsEstablishment() public view returns (bool){
         return establishmentContract.checkIfEstablishment(msg.sender);
     }
 
+    //check if the student exist
     function checkIfStudentExist(address _studentAddress) public view returns (bool){
         return bytes(students[_studentAddress].personalInfo.firstName).length > 0;
     }
 
-
+    // add a student
     function setStudentInfo(
         PersonalInfo calldata _personalInfo,
         InternshipInfo calldata _internshipInfo
@@ -66,6 +72,7 @@ contract Student {
         
     }
 
+    // update a student
     function updateStudentInfo(
         address _studentAddress,
         PersonalInfo calldata _personalInfo,
@@ -77,9 +84,17 @@ contract Student {
         );
     }
 
+    // get a student (address)
     function getStudent(address _studentAddress) external view returns (StudentInfo memory){
         return students[_studentAddress];
     }
+
+    // get diploma of msg.sender ID_holder
+    // function seeDiploma() public view returns (Diploma.DiplomaInfo memory){
+    //     require(diplomaContract.checkIfStudentExist(msg.sender), "Student does not exist");
+    //     return diplomaContract.getDiploma(msg.sender);
+    // }
+    
 }
 
 // ["studentAddress", "firstName", "lastName", "birthday", "sexe", "nationality", "civilityStatus", "homeAddress", "courriel", "phone"]

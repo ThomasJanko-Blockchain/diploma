@@ -5,8 +5,8 @@ import "./MyToken.sol";
 import "./Establishment.sol";
 import "./Student.sol";
 
-contract DiplomaRegistry {
-    struct Diploma {
+contract Diploma {
+    struct DiplomaInfo {
         address ID_holder;
         string nom_EES;
         uint ID_EES;
@@ -17,19 +17,19 @@ contract DiplomaRegistry {
         string obtention_date;
     }
 
-    mapping(address => Diploma) public diplomas;
+    mapping(address => DiplomaInfo) public diplomas;
     Establishment public establishmentContract;
     Student public studentContract;
 
     //onlyEstablishment can add a diploma
     modifier onlyEstablishment() {
-        require(establishmentContract.isEstablishment(msg.sender), "Only establishment can do this.");
+        require(establishmentContract.checkIfEstablishment(msg.sender), "Only establishment can do this.");
         _;
     }
 
     //check if the sender is an establishment
     function checkIfSenderIsEstablishment() public view returns (bool){
-        return establishmentContract.isEstablishment(msg.sender);
+        return establishmentContract.checkIfEstablishment(msg.sender);
     }
 
     //can be set to private
@@ -54,7 +54,7 @@ contract DiplomaRegistry {
         string memory _obtentionDate
         ) external onlyEstablishment {
             require(studentContract.checkIfStudentExist(_idHolder), "Student does not exist");
-            diplomas[_idHolder] = Diploma(
+            diplomas[_idHolder] = DiplomaInfo(
                 _idHolder,
                 _nomEstablishment,
                 _idEstablishment,
@@ -65,4 +65,10 @@ contract DiplomaRegistry {
                 _obtentionDate
             );
         }
+
+    function getDiploma(address _idHolder) public view returns (DiplomaInfo memory){
+        require(studentContract.checkIfStudentExist(_idHolder), "This student does not exist");
+        require(diplomas[_idHolder].ID_holder == _idHolder, "This student does not have a diploma");
+        return diplomas[_idHolder];
+    }
 }
