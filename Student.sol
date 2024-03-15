@@ -89,15 +89,10 @@ contract Student {
         return students[_studentAddress];
     }
 
-    // get diploma of msg.sender ID_holder
-    // function seeDiploma() public view returns (Diploma.DiplomaInfo memory){
-    //     require(diplomaContract.checkIfStudentExist(msg.sender), "Student does not exist");
-    //     return diplomaContract.getDiploma(msg.sender);
-    // }
-    
+    //TODO: onlyCompany
+    function evaluate(address _studentAddress, string memory _evaluation) external {
+        require(checkIfStudentExist(_studentAddress), "Student does not exist");
+        students[_studentAddress].internshipInfo.evaluation = _evaluation;
+    }
 }
 
-// ["studentAddress", "firstName", "lastName", "birthday", "sexe", "nationality", "civilityStatus", "homeAddress", "courriel", "phone"]
-// ["0xC69B6fd033e8b4C9c3BD2A322B3Fa754010dd68E", "Jhon", "Doe", "01/01/1990", "M", "French", "Single", "1 rue de la paix, Paris", "Joohn@lepauvre.com", "06 12 34 56 78"]
-// ["section", "subjectPfe", "enterpriseInternshipPfe", "fullnameInternshipMaster", "dateStartInternship", "dateEndInternship", "evaluation"]
-// ["Computer Science", "Blockchain", "IBM", "John Smith", "01/01/2021", "01/07/2021", "A"]

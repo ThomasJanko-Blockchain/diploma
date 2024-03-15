@@ -71,4 +71,5 @@ contract Diploma {
         require(diplomas[_idHolder].ID_holder == _idHolder, "This student does not have a diploma");
         return diplomas[_idHolder];
     }
+
 }

@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./MyToken.sol";
 import "./Student.sol";
+import "./Diploma.sol";
 
 contract Company {
     struct CompanyInfo {
@@ -19,10 +21,15 @@ contract Company {
 
     mapping(address => CompanyInfo) public companies;
     Student public studentContract;
+    MyToken public tokenContract;
+    Diploma public diplomaContract;
 
     // Contract constructor dependency (Establishment contract address)
-    constructor(address _studentContractAddress) {
+    constructor(address _tokenContract, address _studentContractAddress, address _diplomaContractAddress) {
+        tokenContract = MyToken(_tokenContract);
         studentContract = Student(_studentContractAddress);
+        diplomaContract = Diploma(_diplomaContractAddress);
+        
     }
 
     modifier onlyCompany() {
@@ -70,10 +77,13 @@ contract Company {
 
     function EvaluateStudent (address _studentAddress, string memory _evaluation) external onlyCompany {
         require(studentContract.checkIfStudentExist(_studentAddress), "Student does not exist");
-        Student.PersonalInfo memory _personalInfo = studentContract.getStudent(_studentAddress).personalInfo;
-        Student.InternshipInfo memory _internshipInfo = studentContract.getStudent(_studentAddress).internshipInfo;
-        _internshipInfo.evaluation = _evaluation;
-        studentContract.updateStudentInfo(_studentAddress, _personalInfo, _internshipInfo);
+        studentContract.evaluate(_studentAddress, _evaluation);
+        tokenContract.payEvaluationRewards(msg.sender);
+    }
+
+    function VerifyDiploma (address _studentAddress) external onlyCompany {
+        require(diplomaContract.getDiploma(_studentAddress).ID_holder == _studentAddress, "Diploma does not exist");
+        tokenContract.payVerificationFees(msg.sender);
     }
 }
  
